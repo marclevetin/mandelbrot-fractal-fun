@@ -1,0 +1,63 @@
+<!-- Updated version of this tutorial: https://progur.com/2017/02/create-mandelbrot-fractal-javascript.html  -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Mandelbrot</title>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="600" height="600">This is a canvas</canvas>
+
+    <script>
+      // identifies the canvas
+      const myCanvas = document.getElementById('myCanvas');
+      const ctx = myCanvas.getContext("2d"); // tells the canvas to be 2D.
+
+      let magnificationFactor = 200;
+      let panX = 2;
+      let panY = 1.5;
+
+      function checkIfBelongsToMandelbrotSet(x,y) {
+        // sets Z0
+        let realComponentOfResult = x;
+        let imaginaryComponentOfResult = y;
+        const maxIterations = 100;
+
+        // sets Zprime and onwards
+        //mandelbrot set calculation: Z = Z^2 + C; Z1 = Z0^2 + C; and so on
+        // Z0 = x + iy
+        // Z1 = (x + iy)^2 + (x + iy) = (x^2 - y^2 + x) + i(2xy +y)
+        // Z2 = Z1^2 + (x + iy)
+        for (let i = 0; i < maxIterations; i++) {
+          let tempRealComponent = realComponentOfResult**2 - imaginaryComponentOfResult**2 + x;
+          let tempImaginaryComponent = 2 * realComponentOfResult * imaginaryComponentOfResult + y;
+
+          // resets for next iteration
+          realComponentOfResult = tempRealComponent;
+          imaginaryComponentOfResult = tempImaginaryComponent;
+
+          if (realComponentOfResult * imaginaryComponentOfResult > 5) {
+            return (i / maxIterations * 100);
+          }
+        }
+
+        return 0;
+      }
+
+      for(let x = 0; x < myCanvas.width; x++) {
+        for(let y = 0; y < myCanvas.height; y++) {
+          let belongsToSet = checkIfBelongsToMandelbrotSet(x / magnificationFactor - panX, y / magnificationFactor - panY);
+
+          if (belongsToSet == 0) {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(x,y,1,1);
+          } else {
+            ctx.fillStyle = 'hsl(0, 100%, ' + belongsToSet + '%)';
+            ctx.fillRect(x,y,1,1);
+          }
+        }
+      }
+
+    </script>
+  </body>
+</html>
